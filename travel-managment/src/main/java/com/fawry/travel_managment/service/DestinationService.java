@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +22,18 @@ public class DestinationService {
         return destinationRepository.findAll();
     }
 
+    public Destination getDestinationById(UUID id) {
+        return destinationRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Destination not found"));
+    }
+
+    public Page<Destination> getDestinations(String search, Pageable pageable) {
+        if (search != null && !search.isBlank()) {
+            return destinationRepository.findByCountryContainingIgnoreCase(search, pageable);
+        }
+        return destinationRepository.findAll(pageable);
+    }
+
     public Destination addDestination(Destination destination) {
         return destinationRepository.save(destination);
     }
@@ -30,5 +45,9 @@ public class DestinationService {
     public Object fetchCountriesFromExternalApi (String countryName) {
         String url = "https://restcountries.com/v3.1/name/" + countryName;
         return restTemplate.getForObject(url, Object.class);
+    }
+
+    public List<Destination> saveAllDestinations(List<Destination> destinations) {
+        return destinationRepository.saveAll(destinations);
     }
 }

@@ -30,7 +30,7 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public void addWantedDestinations(UUID userId , UUID destinationId) {
+    public void addWantedDestination(UUID userId , UUID destinationId) {
         User user = userRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -47,7 +47,7 @@ public class UserService {
         return user.getWantedDestinations();
     }
 
-    public void removeWantedDestinations(UUID userId , UUID destinationId) {
+    public void removeWantedDestination(UUID userId , UUID destinationId) {
         User user = userRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found"));
 
