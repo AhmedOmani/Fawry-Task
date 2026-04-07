@@ -1,0 +1,17 @@
+services:
+  backend:
+    build: ./travel-managment
+    ports:
+      - "8080:8080"
+    volumes:
+      - h2-data:/app/data
+
+  frontend:
+    build: ./travel-managment-frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+
+volumes:
+  h2-data:
