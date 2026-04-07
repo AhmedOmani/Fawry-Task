@@ -1,0 +1,69 @@
+<div class="admin-container">
+  <div class="header">
+    <h1>Admin Dashboard</h1>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+
+  @if (message) {
+    <div [class]="isError ? 'message error' : 'message success'">{{ message }}</div>
+  }
+
+  <div class="section">
+    <h2>Search Country (External API)</h2>
+    <div class="search-bar">
+      <input type="text" [(ngModel)]="searchCountry" placeholder="e.g. Egypt, France..." name="search" />
+      <button (click)="searchExternal()">Search</button>
+    </div>
+
+    @if (searchResults.length > 0) {
+      <div class="results">
+        @for (result of searchResults; track result.country) {
+          <div class="result-card">
+            <img [src]="result.flagImageUrl" alt="flag" class="flag" />
+            <div class="info">
+              <strong>{{ result.country }}</strong> — {{ result.capital }}, {{ result.region }}
+            </div>
+            <button class="save-btn" (click)="saveFromExternal(result)">+ Add</button>
+          </div>
+        }
+        @if (searchResults.length > 1) {
+          <button class="bulk-btn" (click)="saveAllFromExternal()">Save All ({{ searchResults.length }})</button>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="section">
+    <h2>Destinations</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Flag</th>
+          <th>Country</th>
+          <th>Capital</th>
+          <th>Region</th>
+          <th>Currency</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (dest of destinations; track dest.id) {
+          <tr>
+            <td><img [src]="dest.flagImageUrl" alt="flag" class="flag-small" /></td>
+            <td>{{ dest.country }}</td>
+            <td>{{ dest.capital }}</td>
+            <td>{{ dest.region }}</td>
+            <td>{{ dest.currency }}</td>
+            <td><button class="delete-btn" (click)="deleteDestination(dest.id, dest.country)">Delete</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button (click)="prevPage()" [disabled]="currentPage === 0">← Previous</button>
+      <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">Next →</button>
+    </div>
+  </div>
+</div>

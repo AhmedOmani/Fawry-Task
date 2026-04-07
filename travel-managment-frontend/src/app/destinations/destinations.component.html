@@ -1,0 +1,64 @@
+<div class="destinations-container">
+  <div class="header">
+    <h1>Travel Destinations</h1>
+    <div class="header-actions">
+      <button (click)="activeTab = 'browse'" [class.active]="activeTab === 'browse'">Browse</button>
+      <button (click)="activeTab = 'wishlist'" [class.active]="activeTab === 'wishlist'">My Wishlist ({{ wishlist.length }})</button>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </div>
+
+  @if (message) {
+    <div class="message">{{ message }}</div>
+  }
+
+  @if (activeTab === 'browse') {
+    <div class="search-bar">
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Search destinations..." name="search" />
+      <button (click)="search()">Search</button>
+    </div>
+
+    <div class="cards">
+      @for (dest of destinations; track dest.id) {
+        <div class="card">
+          <img [src]="dest.flagImageUrl" alt="flag" class="card-flag" />
+          <div class="card-body">
+            <h3>{{ dest.country }}</h3>
+            <p>{{ dest.capital }} — {{ dest.region }}</p>
+            <p class="detail">Population: {{ dest.population | number }}</p>
+            <p class="detail">Currency: {{ dest.currency }}</p>
+            <button (click)="toggleWishlist(dest)" [class.in-wishlist]="isInWishlist(dest.id)">
+              {{ isInWishlist(dest.id) ? '★ In Wishlist' : '☆ Add to Wishlist' }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="pagination">
+      <button (click)="prevPage()" [disabled]="currentPage === 0">← Previous</button>
+      <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">Next →</button>
+    </div>
+  }
+
+  @if (activeTab === 'wishlist') {
+    @if (wishlist.length === 0) {
+      <p class="empty">Your wishlist is empty. Browse destinations and add some!</p>
+    }
+    <div class="cards">
+      @for (dest of wishlist; track dest.id) {
+        <div class="card">
+          <img [src]="dest.flagImageUrl" alt="flag" class="card-flag" />
+          <div class="card-body">
+            <h3>{{ dest.country }}</h3>
+            <p>{{ dest.capital }} — {{ dest.region }}</p>
+            <p class="detail">Population: {{ dest.population | number }}</p>
+            <p class="detail">Currency: {{ dest.currency }}</p>
+            <button class="remove-btn" (click)="toggleWishlist(dest)">Remove</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
