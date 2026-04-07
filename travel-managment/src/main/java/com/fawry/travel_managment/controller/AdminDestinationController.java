@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/destinations")
@@ -47,8 +48,8 @@ public class AdminDestinationController {
 
     // 4) DELETE /api/admin/destinations/:id 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDestination(@PathVariable UUID id) {
+    public ResponseEntity<Map<String, String>> deleteDestination(@PathVariable UUID id) {
         destinationService.deleteDestination(id);
-        return ResponseEntity.ok("Destination deleted successfully");
+        return ResponseEntity.ok(Map.of("message", "Destination deleted successfully"));
     }
 }

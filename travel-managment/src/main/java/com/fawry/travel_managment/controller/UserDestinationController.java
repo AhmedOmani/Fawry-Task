@@ -1,6 +1,7 @@
 package com.fawry.travel_managment.controller;
 
 import com.fawry.travel_managment.entity.Destination;
+import com.fawry.travel_managment.security.JwtUtil;
 import com.fawry.travel_managment.service.DestinationService;
 import com.fawry.travel_managment.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +20,20 @@ public class UserDestinationController {
 
     private final DestinationService destinationService;
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
-    // 1) GET /api/destinations/:id (Returns single approved dest)
+    private UUID getUserIdFromToken(String authHeader) {
+        String token = authHeader.substring(7); // Remove "Bearer "
+        return jwtUtil.extractUserId(token);
+    }
+
+    // 1) GET /api/destinations/:id 
     @GetMapping("/{id}")
     public ResponseEntity<Destination> getSingleDestination(@PathVariable UUID id) {
-        // You'll need to add findById in DestinationService if you haven't!
         return ResponseEntity.ok(destinationService.getDestinationById(id));
     }
 
-    // 2) GET /api/destinations?search=&page=0&size=10 (Returns all/searched)
+    // 2) GET /api/destinations?search=&page=0&size=10 
     @GetMapping
     public ResponseEntity<Page<Destination>> getDestinations(
             @RequestParam(required = false) String search,
@@ -36,30 +42,30 @@ public class UserDestinationController {
         return ResponseEntity.ok(destinationService.getDestinations(search, PageRequest.of(page, size)));
     }
 
-    // 3) POST /api/destinations/:id/want-to-visit (Mark dest as wanted)
+    // 3) POST /api/destinations/:id/want-to-visit 
     @PostMapping("/{id}/want-to-visit")
     public ResponseEntity<String> markWantToVisit(
-            @PathVariable UUID id, 
-            @RequestHeader("X-User-Id") UUID userId) { // Temp header for Postman testing
-        
+            @PathVariable UUID id,
+            @RequestHeader("Authorization") String authHeader) {
+        UUID userId = getUserIdFromToken(authHeader);
         userService.addWantedDestination(userId, id);
         return ResponseEntity.ok("Destination added to wishlist!");
     }
 
-    // 4) GET /api/destinations/want-to-visit (Get wishlist)
+    // 4) GET /api/destinations/want-to-visit 
     @GetMapping("/want-to-visit")
     public ResponseEntity<Set<Destination>> getWantedDestinations(
-            @RequestHeader("X-User-Id") UUID userId) { // Temp header for Postman testing
-        
+            @RequestHeader("Authorization") String authHeader) {
+        UUID userId = getUserIdFromToken(authHeader);
         return ResponseEntity.ok(userService.getWantedDestinations(userId));
     }
 
-    // 5) DELETE /api/destinations/:id/want-to-visit (Unmark a dest)
+    // 5) DELETE /api/destinations/:id/want-to-visit 
     @DeleteMapping("/{id}/want-to-visit")
     public ResponseEntity<String> removeWantedDestination(
-            @PathVariable UUID id, 
-            @RequestHeader("X-User-Id") UUID userId) { // Temp header for Postman testing
-        
+            @PathVariable UUID id,
+            @RequestHeader("Authorization") String authHeader) {
+        UUID userId = getUserIdFromToken(authHeader);
         userService.removeWantedDestination(userId, id);
         return ResponseEntity.ok("Destination removed from wishlist.");
     }

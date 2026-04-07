@@ -7,6 +7,7 @@ import com.fawry.travel_managment.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
@@ -44,7 +46,7 @@ public class UserService {
     public Set<Destination> getWantedDestinations(UUID userId) {
         User user = userRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getWantedDestinations();
+        return new java.util.HashSet<>(user.getWantedDestinations());
     }
 
     public void removeWantedDestination(UUID userId , UUID destinationId) {
