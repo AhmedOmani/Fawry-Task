@@ -17,20 +17,20 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.expiration}")
-    private long expirationMs;
+    @Value("${jwt.access-expiration}")
+    private long accessExpirationMs;
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String email, String role, UUID userId) {
+    public String generateAccessToken(String email, String role, UUID userId) {
         return Jwts.builder()
                 .subject(email)
                 .claim("role", role)
                 .claim("userId", userId.toString())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expirationMs))
+                .expiration(new Date(System.currentTimeMillis() + accessExpirationMs))
                 .signWith(getSigningKey())
                 .compact();
     }
