@@ -19,9 +19,7 @@ export class RegisterComponent {
 
     onRegister() {
         this.authService.register(this.name, this.email, this.password).subscribe({
-            next: (response) => {
-                this.authService.saveToken(response.token);
-                this.authService.saveRole("USER");
+            next: () => {
                 this.router.navigate(["/destinations"]);
             },
             error: (err) => {

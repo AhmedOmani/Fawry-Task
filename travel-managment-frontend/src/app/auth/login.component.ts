@@ -20,9 +20,6 @@ export class LoginComponent {
     onLogin() {
         this.authService.login(this.email, this.password).subscribe({
             next: (response) => {
-                this.authService.saveToken(response.token);
-                this.authService.saveRole(response.role);
-
                 if (response.role === "ADMIN") {
                     this.router.navigate(["/admin"]);
                 } else {
@@ -35,4 +32,3 @@ export class LoginComponent {
         });
     }
 }
-
